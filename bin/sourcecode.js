@@ -38,18 +38,27 @@ switch (platform) {
       "linux",
       "sourcecode"
     );
+    break;
 }
 
 if (!fs.existsSync(binaryPath)) {
-  console.error("Missing sourcecode binary:");
+  console.error("\n❌ Missing sourcecode binary:");
   console.error(binaryPath);
+  console.error("\nMake sure you have copied the compiled Nuitka binary.\n");
   process.exit(1);
 }
 
 const child = spawn(binaryPath, process.argv.slice(2), {
   stdio: "inherit",
+  env: process.env,
+  windowsHide: true,
 });
 
 child.on("exit", (code) => {
   process.exit(code ?? 0);
+});
+
+child.on("error", (err) => {
+  console.error("Failed to start binary:", err);
+  process.exit(1);
 });

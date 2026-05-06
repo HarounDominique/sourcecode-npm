@@ -24,7 +24,13 @@
   "engines": {
     "node": ">=18"
   },
+  "preferGlobal": true,
+  "os": ["linux", "darwin", "win32"],
   "dependencies": {
     "chalk": "^5.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/sourcecode-npm"
   }
 }
