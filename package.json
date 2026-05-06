@@ -1,0 +1,30 @@
+{
+  "name": "sourcecode-npm",
+  "version": "1.0.0",
+  "description": "Deterministic codebase context for AI coding agents",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "sourcecode": "./bin/sourcecode.js"
+  },
+  "files": [
+    "bin",
+    "vendor",
+    "README.md"
+  ],
+  "keywords": [
+    "ai",
+    "llm",
+    "code-analysis",
+    "ast",
+    "context",
+    "repository",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0"
+  }
+}
