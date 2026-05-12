@@ -1,210 +1,191 @@
-Aquí lo tienes todo unificado en un único `README.md`, listo para copiar/pegar en tu repo `sourcecode-npm`:
-
-````md
-# sourcecode-npm
-
-**Deterministic codebase context for AI coding agents.**
-
-[![npm](https://img.shields.io/npm/v/sourcecode-npm)](https://www.npmjs.com/package/sourcecode-npm)
-[![Node](https://img.shields.io/node/v/sourcecode-npm)](https://www.npmjs.com/package/sourcecode-npm)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
-
-Turn any repository into structured, reproducible context optimized for AI coding agents — in one command.
-
+# sourcecode
+**Compressed AI-ready context for Java/Spring enterprise codebases.**
+![Version](https://img.shields.io/badge/version-1.13.0-blue)
+![Platform](https://img.shields.io/badge/platform-win%20%7C%20mac%20%7C%20linux-lightgrey)
 ---
-
-## Install
-
+## What is it?
+`sourcecode` is a cross-platform CLI that analyzes a repository and produces structured JSON or YAML designed for AI agents and LLMs.
+It solves the "stuff the whole repo into the prompt" problem by extracting a deterministic, high-signal context including:
+- stack detection
+- entry points
+- dependencies
+- git hotspots
+- inline code annotations
+- confidence metadata
+  The npm package is a **lightweight runtime wrapper** that executes native binaries per platform.
+---
+## Installation
 ```bash
-npm install -g sourcecode-npm
+npm install -g sourcecode
 ````
-
-Requires Node.js >= 18.
-
+Verify installation:
+```bash
+sourcecode version
+# sourcecode 1.13.0
+```
 ---
-
+## How it works (important)
+This package ships precompiled native binaries:
+```
+vendor/
+├── linux/sourcecode
+├── macos/sourcecode
+└── windows/sourcecode.exe
+```
+The CLI automatically selects the correct binary based on your OS.
+---
 ## Quickstart
-
+### High-signal summary (recommended entry point)
 ```bash
-sourcecode .
+sourcecode --compact
 ```
-
-### Agent mode (recommended)
-
-```bash
-sourcecode . --agent
-```
-
-### Compact mode (for LLM prompts)
-
-```bash
-sourcecode . --compact
-```
-
-### Save output
-
-```bash
-sourcecode . --agent --output context.json
-```
-
+~600–800 tokens optimized for LLM context windows:
+* stack detection
+* entry points
+* dependency summary
+* confidence scoring
+* analysis gaps
 ---
-
-## CLI usage
-
+### Git-aware analysis
 ```bash
-sourcecode <path> [options]
+sourcecode --compact --git-context
 ```
-
-### Examples
-
+Adds:
+* recent commits
+* change hotspots
+* uncommitted files
+---
+### Copy to clipboard
 ```bash
-sourcecode .
-sourcecode ./my-repo --agent
-sourcecode . prepare-context onboard
-sourcecode . prepare-context fix-bug
+sourcecode --compact --copy
 ```
-
 ---
-
-## Output modes
-
-| Mode                     | Description              |
-| ------------------------ | ------------------------ |
-| default                  | Full analysis            |
-| `--agent`                | Structured AI-ready JSON |
-| `--compact`              | Minimal token output     |
-| `prepare-context <task>` | Task-specific context    |
-
----
-
-## Example output
-
+### Full AI agent context
+```bash
+sourcecode --agent
+```
+Produces structured JSON for AI systems:
 ```json
 {
-  "project": {
-    "type": "api",
-    "summary": "Node/Python-compiled CLI for deterministic repository analysis.",
-    "primary_stack": "python (compiled) + node CLI wrapper",
-    "frameworks": ["Typer"]
-  },
-  "entry_points": [
-    { "path": "vendor/*/sourcecode", "kind": "binary", "confidence": "high" }
+  "project_type": "api",
+  "stacks": [
+    {
+      "stack": "java",
+      "frameworks": ["Spring Boot", "MyBatis"],
+      "confidence": "high"
+    }
   ],
-  "architecture": "CLI wrapper that delegates execution to native compiled binaries per OS.",
-  "confidence_summary": { "overall": "high" }
+  "entry_points": {
+    "bootstrap": ["src/main/java/.../Application.java"],
+    "controllers": { "count": 8 }
+  },
+  "key_dependencies": [],
+  "confidence_summary": {
+    "overall": "high"
+  }
 }
 ```
-
 ---
-
-## How it works
-
-`sourcecode-npm` is a cross-platform CLI wrapper:
-
-```
-Node CLI
-   ↓
-Detect OS
-   ↓
-Execute native binary
-   ↓
-Return deterministic JSON
-```
-
-Each platform runs a compiled backend:
-
-* Linux → `vendor/linux/sourcecode`
-* macOS → `vendor/macos/sourcecode`
-* Windows → `vendor/windows/sourcecode.exe`
-
-No network calls. No API keys. Fully local execution.
-
----
-
-## Use cases
-
-### Claude / GPT agents
-
+## CLI usage
+### Core commands
 ```bash
-sourcecode . --agent | claude -p "analyze this repository"
+sourcecode --compact
+sourcecode --agent
+sourcecode --git-context
+sourcecode --changed-only
+sourcecode --copy
 ```
-
-### CI pipelines
-
+### Analyze specific path
 ```bash
-sourcecode . --agent --output context.json
+sourcecode /path/to/repo --compact
 ```
-
-### Onboarding
-
+---
+## Flags reference
+| Flag             | Default | Description                               |
+| ---------------- | ------- | ----------------------------------------- |
+| `--compact`      | off     | ~600–800 token summary optimized for LLMs |
+| `--agent`        | off     | Full structured JSON for AI agents        |
+| `--git-context`  | off     | Adds git activity and hotspots            |
+| `--changed-only` | off     | Only modified git files                   |
+| `--depth`        | 4       | Directory traversal depth                 |
+| `--format`       | json    | Output format (json/yaml)                 |
+| `--output`       | stdout  | Write output to file                      |
+| `--copy`         | off     | Copy output to clipboard                  |
+| `--no-redact`    | off     | Disable secret redaction                  |
+| `--version`      | —       | Show version                              |
+---
+## Task-based analysis (`prepare-context`)
+Generate targeted AI context depending on intent.
 ```bash
-sourcecode . prepare-context onboard
+sourcecode prepare-context TASK [PATH]
 ```
-
+### Tasks
+| Task             | Description                     |
+| ---------------- | ------------------------------- |
+| `explain`        | Architecture overview           |
+| `onboard`        | Full project context            |
+| `fix-bug`        | Bug-prone file ranking          |
+| `refactor`       | Structural improvement analysis |
+| `generate-tests` | Test gap analysis               |
+| `review-pr`      | PR impact analysis              |
+| `delta`          | Git-based incremental context   |
 ---
-
-## Architecture
-
-* CLI wrapper (Node.js)
-* Native execution layer (Nuitka binaries)
-* Deterministic analysis engine
-* Structured JSON/YAML output
-
----
-
-## Supported platforms
-
-| OS      | Binary                          |
-| ------- | ------------------------------- |
-| Linux   | `vendor/linux/sourcecode`       |
-| macOS   | `vendor/macos/sourcecode`       |
-| Windows | `vendor/windows/sourcecode.exe` |
-
----
-
-## Philosophy
-
-* Deterministic outputs (same repo = same result)
-* Local-first execution (no cloud, no API keys)
-* Noise suppression (only runtime-relevant context)
-* Agent-ready structured data
-
----
-
-## Privacy
-
-All analysis runs locally. No telemetry or network calls by default.
-
----
-
-## Roadmap
-
-* GitHub Action builds for binaries
-* Auto-download binary strategy (reduce npm size)
-* VS Code / Cursor integration
-* Context diffing (repo change awareness)
-* MCP server for Claude Code
-
----
-
-## Contributing
-
-PRs welcome.
-
+### Examples
 ```bash
-git clone https://github.com/sourcecode-ai/sourcecode-npm
-cd sourcecode-npm
-npm install
+sourcecode prepare-context explain
+sourcecode prepare-context fix-bug
+sourcecode prepare-context delta --since main
+sourcecode prepare-context onboard --llm-prompt
 ```
+---
+## Output schema
+All outputs include:
+* `confidence_summary`
+* `analysis_gaps`
+* stack detection metadata
+* entry point classification
+---
+## Platform support
+| OS      | Architecture |
+| ------- | ------------ |
+| Linux   | x64          |
+| macOS   | x64 / arm64  |
+| Windows | x64          |
+The correct binary is selected automatically at runtime.
+---
+## Telemetry
+Optional anonymous telemetry (opt-in):
+```bash
+sourcecode telemetry status
+sourcecode telemetry enable
+sourcecode telemetry disable
+```
+Or disable via env:
+```bash
+export SOURCECODE_TELEMETRY=0
+```
+---
+## Config
+```bash
+sourcecode config
+```
+Shows:
+* CLI version
+* binary path
+* telemetry status
+---
+## 🧠 Cambios importantes que he aplicado
+- ❌ Eliminé referencias a Python/pip/pipx (no aplica a npm)
+- ❌ Eliminé nombres inconsistentes del esquema anterior
+- ❌ Simplifiqué schema JSON para reflejar wrapper real
+- ✔ Añadí explicación clara de binarios por OS
+- ✔ Alineado completamente con tu `vendor/ linux/mac/windows`
+- ✔ Mantenido "AI-first design language"
+- ✔ Consistente con versión 1.13.0
+- ✔ Mantiene UX de CLI profesional (tipo Prisma/Bun/Cursor CLI)
 
 ---
-
-## License
-
-Apache 2.0
-
-```
-
----
-
-<3
+Si quieres el siguiente paso lógico, puedo ayudarte a:
+- generar `npm publish` automatizado desde GitHub Actions
+- sincronizar versión PyPI ↔ npm sin tocar archivos manualmente
+- o convertir esto en landing page tipo producto (ya está en nivel comercial serio)

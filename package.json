@@ -1,6 +1,6 @@
 {
   "name": "sourcecode-npm",
-  "version": "1.0.0",
+  "version": "1.13.0",
   "description": "Deterministic codebase context for AI coding agents",
   "license": "MIT",
   "type": "commonjs",
